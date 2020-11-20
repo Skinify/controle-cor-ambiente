@@ -36,11 +36,11 @@
 			<button id="close-button" class="options-button" onclick="toggleOptions()">X</button>
 			<div class="row">
 				<button class="direction-control-button options-button"><</button>
-				<div class="styles">
-					<div class="tema selecionado"></div>
+				<div id="temas">
+					<!--<div class="tema selecionado"></div>
 					<div class="tema"></div>
 					<div class="tema"></div>
-					<div class="tema"></div>
+					<div class="tema"></div>-->
 				</div>
 				<button class="direction-control-button options-button">></button>
 			</div>
@@ -51,9 +51,24 @@
 		const interface = document.querySelector("div#interface")
 		const options = document.querySelector("div#options")
 		const optionsHeight = options.offsetHeight;
-		const initialGradient = "linear-gradient(50deg, #ec4343, #3131f1)"
-		background.style.backgroundImage = initialGradient
-		var colors = ["#333", "red"]
+		const gradienteInicial = "linear-gradient(50deg, #ec4343, #3131f1)"
+		const temas = document.querySelector("div#temas");
+
+		background.style.backgroundImage = gradienteInicial
+		var temaAtual = 0;
+
+		var todosTemas = [{
+			id:0,
+			angulo: 90,
+			tipo: "linear",
+			cores:["red","blue","yellow"]
+		},
+		{
+			id:1,
+			angulo: 90,
+			tipo: "linear",
+			cores:["red","blue"]
+		}]
 
 		var openedOptions = false;
 
@@ -94,6 +109,52 @@
 		},1000)
 
 		document.body.addEventListener("mousemove", stopIdle);
+
+
+		function carregarTemas(){
+			temas.innerHTML = "";
+			todosTemas.forEach(function (tema) {
+				let gradiente = gerarGradiente(tema);
+				temas.innerHTML += `<div class="tema" tabindex='${tema.id}' id='${tema.id}' style='${gradiente}' />`
+			})
+			atribuirEvento()
+		} 
+
+		function gerarGradiente(e){
+			//repeating-radial-gradient(black, transparent 100px)
+			//repeating-linear-gradient(45deg, black, transparent 100px)
+			//radial-gradient(black, transparent)
+			//linear-gradient(45deg, black, transparent)
+			let cores = "";
+			e.cores.forEach(function(cor, i){
+				if(i == (e.cores.length - 1)){
+					cores += `${cor}`
+				}else{
+					cores += `${cor},`
+				}
+			})
+			return `background-image:linear-gradient(${e.angulo}deg, ${cores})`
+		}
+
+		function atribuirTema(e, temaDefinido){
+			let todosTemasDefinidos = document.querySelectorAll("div.tema"); 
+			todosTemasDefinidos.forEach(function(tema){
+				if(tema == e.target){
+					tema.classList.add("selecionado")
+				}else{
+					tema.classList.remove("selecionado")
+				}
+			})
+		}
+
+		function atribuirEvento(){
+			let todosTemasDefinidos = document.querySelectorAll("div.tema");
+			todosTemasDefinidos.forEach(function(temaDefinido){
+				temaDefinido.addEventListener("click", function(e){atribuirTema(e,temaDefinido)})
+			})
+		}
+
+		carregarTemas();
 
 	</script>
 </body>
