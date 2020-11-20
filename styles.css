@@ -49,7 +49,37 @@ html, body, main {
     justify-content: center;
 }
 
-#options .options-button{
+#criacao{
+    background-color: #333;
+    position: absolute;
+    z-index: 1;
+    width: 30%;
+    height: 100%;
+    right: -30%;
+    top:0;
+    box-shadow: 0px 0px 10px #232323, 0px 6px 12px #464444d4 inset;
+    transition: all .3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.titulo-container{
+    flex:0; 
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+}
+
+.titulo-container h2{
+    color: white;
+    align-self: flex-start;
+    font-size:32px;
+    margin:12px 24px;
+    font-weight: lighter;
+}
+
+.container-button{
+    font-weight: lighter;
     color:white;
     background-color: transparent;
     border: 0;
@@ -59,15 +89,15 @@ html, body, main {
     transition: transform .2s ease;
 }
 
-#options .options-button:hover{
+.container-button:hover{
     transform: scale(1.1);
 }
 
-#options .options-button:active{
+.container-button:active{
     transform: scale(0.9);
 }
 
-#close-button{
+.botao-fechar{
     align-self: flex-end;
 }
 

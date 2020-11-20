@@ -26,23 +26,32 @@
 					<button class="primary-button" onclick="toggleOptions()">
 						Temas
 					</button>
-					<button class="primary-button">
+					<button class="primary-button" onclick="abrirCriacao()">
 						Criar tema
 					</button>
 				</div>
 			</div>
 		</div>
 		<div id="options">
-			<button id="close-button" class="options-button" onclick="toggleOptions()">X</button>
+			<div class="titulo-container">
+				<h2>Temas</h2>
+				<button class="container-button botao-fechar" onclick="toggleOptions()">X</button>
+			</div>
 			<div class="row">
-				<button class="direction-control-button options-button"><</button>
+				<button class="direction-control-button container-button"><</button>
 				<div id="temas">
 					<!--<div class="tema selecionado"></div>
 					<div class="tema"></div>
 					<div class="tema"></div>
 					<div class="tema"></div>-->
 				</div>
-				<button class="direction-control-button options-button">></button>
+				<button class="direction-control-button container-button">></button>
+			</div>
+		</div>
+		<div id="criacao">
+			<div class="titulo-container">
+				<h2>Criação de temas</h2>
+				<button class="container-button botao-fechar" onclick="abrirCriacao()">X</button>
 			</div>
 		</div>
 	</main>
@@ -50,7 +59,11 @@
 		const background = document.querySelector("div#background")
 		const interface = document.querySelector("div#interface")
 		const options = document.querySelector("div#options")
+		const criacao = document.querySelector("div#criacao")
+
 		const optionsHeight = options.offsetHeight;
+		const criacaoWidth = criacao.offsetWidth;
+
 		const gradienteInicial = "linear-gradient(50deg, #ec4343, #3131f1)"
 		const temas = document.querySelector("div#temas");
 
@@ -70,19 +83,33 @@
 			cores:["red","blue"]
 		}]
 
-		var openedOptions = false;
+		var opcaoAberta = false, criacaoAberta = false;
 
 		function toggleOptions(){
-			if(openedOptions){
+			if(opcaoAberta){
 				options.style.bottom = `-${optionsHeight}px`
 				background.style.filter = "brightness(1) blur(0)"
 				background.style.pointerEvents = "all";
-				openedOptions = false;
+				opcaoAberta = false;
 			}else{
 				options.style.bottom = `0px`;
-				background.style.filter = "brightness(0.9) blur(0.2px)"
+				background.style.filter = "brightness(0.8) blur(0.6px)"
 				background.style.pointerEvents = "none";
-				openedOptions = true;
+				opcaoAberta = true;
+			}
+		}
+
+		function abrirCriacao(){
+			if(criacaoAberta){
+				criacao.style.right = `-${criacaoWidth}px`
+				background.style.filter = "brightness(1) blur(0)"
+				background.style.pointerEvents = "all";
+				criacaoAberta = false;
+			}else{
+				criacao.style.right = `0px`;
+				background.style.filter = "brightness(0.8) blur(0.6px)"
+				background.style.pointerEvents = "none";
+				criacaoAberta = true;
 			}
 		}
 
@@ -102,7 +129,7 @@
 		const idleTimer = setInterval(function(){
 			if(!idle){
 				idleCount++;
-				if(idleCount > 999){
+				if(idleCount > 15){
 					startIdle();
 				}
 			}
@@ -153,6 +180,23 @@
 			todosTemasDefinidos.forEach(function(temaDefinido){
 				temaDefinido.addEventListener("click", function(e){atribuirTema(e,temaDefinido)})
 			})
+		}
+
+		var teste = 0;
+
+		function saturar(){
+			teste = numeroEntre(-1, 1)
+			//filter :saturete()
+			//console.log(teste)
+			//console.log(background.style)
+		}
+
+		setInterval(function(){
+			saturar()
+		}, 100)
+
+		function numeroEntre(x, y){
+			return Math.floor(Math.random() * y) + x; 
 		}
 
 		carregarTemas();
