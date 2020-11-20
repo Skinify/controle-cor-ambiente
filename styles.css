@@ -115,6 +115,7 @@ html, body, main {
     right: 0;
     width: 20%;
     background-color: white;
+    color:#333;
     display: flex;
     justify-content: center;
     align-items: center;
