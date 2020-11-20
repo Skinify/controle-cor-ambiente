@@ -11,10 +11,8 @@
             method:"clock/getTime",
             parameters:{},
             onSuccess: function (args) {
-				console.log("UTC:", args.utc);
             },
             onFailure: function (args) {
-				console.log(args)
             }
         });
 	</script>
@@ -29,31 +27,43 @@
 				eae
 			</button>
 		</div>
-		<div id="options" style="height: 0%;">
-			<button id="options-close">X</button>
-			<div class="tema"></div>
+		<div id="options">
+			<button id="close-button" class="options-button" onclick="toggleOptions()">X</button>
+			<div class="row">
+				<button class="direction-control-button options-button"><</button>
+				<div class="styles">
+					<div class="tema"></div>
+					<div class="tema"></div>
+					<div class="tema"></div>
+					<div class="tema"></div>
+				</div>
+				<button class="direction-control-button options-button">></button>
+			</div>
 		</div>
 	</main>
 	<script>
 		const background = document.querySelector("div#background")
 		const options = document.querySelector("div#options")
+		const optionsHeight = options.offsetHeight;
 		const initialGradient = "linear-gradient(50deg, #ec4343, #3131f1)"
 		background.style.backgroundImage = initialGradient
 		var colors = ["#333", "red"]
 
 		var openedOptions = false;
+
 		function toggleOptions(){
 			if(openedOptions){
-				options.style.height = "0%"
+				options.style.bottom = `-${optionsHeight}px`
 				background.style.filter = "brightness(1) blur(0)"
+				background.style.pointerEvents = "all";
 				openedOptions = false;
 			}else{
-				options.style.height = "30%"
+				options.style.bottom = `0px`;
 				background.style.filter = "brightness(0.9) blur(0.2px)"
+				background.style.pointerEvents = "none";
 				openedOptions = true;
 			}
 		}
-
 
 	</script>
 </body>
