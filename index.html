@@ -20,12 +20,14 @@
 <body>
 	<main>
 		<div id="background">
-			<button class="primary-button" onclick="toggleOptions()">
-				Temas
-			</button>
-			<button class="primary-button">
-				eae
-			</button>
+			<div id="interface">
+				<button class="primary-button" onclick="toggleOptions()">
+					Temas
+				</button>
+				<button class="primary-button">
+					eae
+				</button>
+			</div>
 		</div>
 		<div id="options">
 			<button id="close-button" class="options-button" onclick="toggleOptions()">X</button>
@@ -43,6 +45,7 @@
 	</main>
 	<script>
 		const background = document.querySelector("div#background")
+		const interface = document.querySelector("div#interface")
 		const options = document.querySelector("div#options")
 		const optionsHeight = options.offsetHeight;
 		const initialGradient = "linear-gradient(50deg, #ec4343, #3131f1)"
@@ -64,6 +67,30 @@
 				openedOptions = true;
 			}
 		}
+
+		function stopIdle(){
+			interface.style.filter = "opacity(1)";
+			idleCount = 0;
+			idle = false;
+		}
+
+		function startIdle(){
+			interface.style.filter = "opacity(0)";
+			idle = true;
+		}
+
+		var idleCount = 0;
+		var idle = false;
+		const idleTimer = setInterval(function(){
+			if(!idle){
+				idleCount++;
+				if(idleCount > 5){
+					startIdle();
+				}
+			}
+		},1000)
+
+		document.body.addEventListener("mousemove", stopIdle);
 
 	</script>
 </body>
