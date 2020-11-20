@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="styles.css"/>
+	<script src="webOSTVjs-1.2.0/webOSTV.js" charset="utf-8"></script>
+	<script src="webOSTVjs-1.2.0/webOSTV-dev.js" charset="utf-8"></script>
+	<script type="text/javascript">
+	   //sample code for calling LS2 API
+       var lunaReq= webOS.service.request("luna://com.palm.systemservice",
+        {
+            method:"clock/getTime",
+            parameters:{},
+            onSuccess: function (args) {
+				console.log("UTC:", args.utc);
+            },
+            onFailure: function (args) {
+				console.log(args)
+            }
+        });
+	</script>
+</head>
+<body>
+	<main>
+		<div id="background">
+			<button class="primary-button" onclick="toggleOptions()">
+				Temas
+			</button>
+			<button class="primary-button">
+				eae
+			</button>
+		</div>
+		<div id="options" style="height: 0%;">
+			<button id="options-close">X</button>
+			<div class="tema"></div>
+		</div>
+	</main>
+	<script>
+		const background = document.querySelector("div#background")
+		const options = document.querySelector("div#options")
+		const initialGradient = "linear-gradient(50deg, #ec4343, #3131f1)"
+		background.style.backgroundImage = initialGradient
+		var colors = ["#333", "red"]
+
+		var openedOptions = false;
+		function toggleOptions(){
+			if(openedOptions){
+				options.style.height = "0%"
+				background.style.filter = "brightness(1) blur(0)"
+				openedOptions = false;
+			}else{
+				options.style.height = "30%"
+				background.style.filter = "brightness(0.9) blur(0.2px)"
+				openedOptions = true;
+			}
+		}
+
+
+	</script>
+</body>
+</html>
