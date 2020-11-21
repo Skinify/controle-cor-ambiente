@@ -53,31 +53,20 @@
 				<h2>Criação de temas</h2>
 				<button class="container-button botao-fechar" onclick="abrirCriacao()">X</button>
 			</div>
-			<div class="tabela-cores" >
-				<div class="coluna-cores">
-					<h2>R</h2>
-					<div class="scroll-cores">
-						<div class="cor" style="background-color: red;">
-							HEX
-						</div>
+			<div  class="grupo-filtro cores">
+				<h2>Cores</h2>
+				<div class="row" style="justify-content:flex-start;align-items: center;">
+					<div style="display: flex; flex:1">
+						<input type="text" class="cor-input">
 					</div>
-				</div>
-				<div class="coluna-cores">
-					<h2>G</h2>
-					<div class="scroll-cores">
-						<div class="cor" style="background-color: red;">
-							HEX
-						</div>
-					</div></div>
-				<div class="coluna-cores">
-					<h2>B</h2>
-					<div class="scroll-cores">
-						<div class="cor" style="background-color: red;">
-							HEX
-						</div>
+					<div class="row" style="flex:0">
+						<button type="button" class="container-button">+</button>
+						<button type="button" class="container-button">-</button>
 					</div>
+					
 				</div>
 			</div>
+			
 			<div class="grupo-filtro">
 				<div class="row" style="align-items: center;justify-content: space-between;">
 					<h2>Luminosidade</h2>
@@ -91,8 +80,10 @@
 					
 				</div>
 			</div>
-			<button class="primary-button">confirmar</button>
-
+			<div style="display: flex;padding:20px 30px; justify-content: space-between;">
+				<button class="primary-button" style="margin:0">limpar</button>
+				<button class="primary-button" style="margin:0">confirmar</button>
+			</div>
 		</div>
 	</main>
 	<script>
@@ -189,7 +180,7 @@
 			}
 		},1000)
 
-		document.body.addEventListener("mousemove", stopIdle);
+		window.addEventListener("mousemove", stopIdle);
 
 
 		function carregarTemas(){
