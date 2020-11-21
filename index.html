@@ -53,9 +53,56 @@
 				<h2>Criação de temas</h2>
 				<button class="container-button botao-fechar" onclick="abrirCriacao()">X</button>
 			</div>
+			<div class="tabela-cores" >
+				<div class="coluna-cores">
+					<h2>R</h2>
+					<div class="scroll-cores">
+						<div class="cor" style="background-color: red;">
+							HEX
+						</div>
+					</div>
+				</div>
+				<div class="coluna-cores">
+					<h2>G</h2>
+					<div class="scroll-cores">
+						<div class="cor" style="background-color: red;">
+							HEX
+						</div>
+					</div></div>
+				<div class="coluna-cores">
+					<h2>B</h2>
+					<div class="scroll-cores">
+						<div class="cor" style="background-color: red;">
+							HEX
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="grupo-filtro">
+				<div class="row" style="align-items: center;justify-content: space-between;">
+					<h2>Luminosidade</h2>
+					<span id="valor-luminosidade">1.0</span>
+				</div>
+				<input type="range"  min="0.4" max="2" step="0.02" class="slider" oninput="alterarValorSlider(this)">
+			</div>
+			<div class="grupo-filtro">
+				<h2>Pré visualizar</h2>
+				<div class="pre-visualizar">
+					
+				</div>
+			</div>
+			<button class="primary-button">confirmar</button>
+
 		</div>
 	</main>
 	<script>
+
+
+		function alterarValorSlider(e){
+			e.parentElement.children[0].children[1].innerHTML = e.value
+		}
+
+
 		const background = document.querySelector("div#background")
 		const interface = document.querySelector("div#interface")
 		const options = document.querySelector("div#options")
@@ -69,6 +116,12 @@
 
 		background.style.backgroundImage = gradienteInicial
 		var temaAtual = 0;
+		var filtrosTema = {
+			brightness: 1,
+			blur:0,
+			saturate:1,
+			opacity: 1
+		}
 
 		var todosTemas = [{
 			id:0,
@@ -88,12 +141,13 @@
 		function toggleOptions(){
 			if(opcaoAberta){
 				options.style.bottom = `-${optionsHeight}px`
-				background.style.filter = "brightness(1) blur(0)"
+				background.style.filter = gerarFiltros(0, 1, 1, 1, true)
 				background.style.pointerEvents = "all";
 				opcaoAberta = false;
 			}else{
 				options.style.bottom = `0px`;
-				background.style.filter = "brightness(0.8) blur(0.6px)"
+				console.log(gerarFiltros())
+				background.style.filter = gerarFiltros(0.6, 0.8, 1, 1, true)
 				background.style.pointerEvents = "none";
 				opcaoAberta = true;
 			}
@@ -102,25 +156,25 @@
 		function abrirCriacao(){
 			if(criacaoAberta){
 				criacao.style.right = `-${criacaoWidth}px`
-				background.style.filter = "brightness(1) blur(0)"
+				background.style.filter = gerarFiltros(0,1,1,1, true)
 				background.style.pointerEvents = "all";
 				criacaoAberta = false;
 			}else{
 				criacao.style.right = `0px`;
-				background.style.filter = "brightness(0.8) blur(0.6px)"
+				background.style.filter = gerarFiltros(0.6,0.8,1,1, true)
 				background.style.pointerEvents = "none";
 				criacaoAberta = true;
 			}
 		}
 
 		function stopIdle(){
-			interface.style.filter = "opacity(1)";
+			interface.style.filter = gerarFiltros(0,1,1,1);
 			idleCount = 0;
 			idle = false;
 		}
 
 		function startIdle(){
-			interface.style.filter = "opacity(0)";
+			interface.style.filter = gerarFiltros(0,1,1,0);
 			idle = true;
 		}
 
@@ -129,7 +183,7 @@
 		const idleTimer = setInterval(function(){
 			if(!idle){
 				idleCount++;
-				if(idleCount > 15){
+				if(idleCount > 2){
 					startIdle();
 				}
 			}
@@ -185,18 +239,25 @@
 		var teste = 0;
 
 		function saturar(){
-			teste = numeroEntre(-1, 1)
-			//filter :saturete()
-			//console.log(teste)
-			//console.log(background.style)
+			background.style.filter = gerarFiltros(filtrosTema.blur, filtrosTema.brightness, numeroEntre(1, 1.10), filtrosTema.opacity)
+		}
+
+		function gerarFiltros(blur = filtrosTema.blur, brightness = filtrosTema.brightness, saturate = filtrosTema.saturate, opacity = filtrosTema.opacity, atulizar = false){
+			if(atulizar){
+				filtrosTema.blur = blur;
+				filtrosTema.brightness = brightness;
+				filtrosTema.saturate = saturate;
+				filtrosTema.opacity = opacity;
+			}
+			return `blur(${blur}px) brightness(${brightness}) saturate(${saturate}) opacity(${opacity})`
 		}
 
 		setInterval(function(){
 			saturar()
-		}, 100)
+		}, 1000)
 
 		function numeroEntre(x, y){
-			return Math.floor(Math.random() * y) + x; 
+			return (Math.random() * (y - x) + x).toFixed(2)
 		}
 
 		carregarTemas();
