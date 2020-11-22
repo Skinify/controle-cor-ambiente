@@ -56,12 +56,12 @@
 			<div  class="grupo-filtro cores">
 				<h2>Cores</h2>
 				<div class="row" style="justify-content:flex-start;align-items: center;">
-					<div style="display: flex; flex:1">
-						<input type="text" class="cor-input">
+					<div id="criacao-cores">
+						<input type="text" class="cor-input" value="#FFF" onblur="carregarPrevisualizacao()">
 					</div>
-					<div class="row" style="flex:0">
-						<button type="button" class="container-button">+</button>
-						<button type="button" class="container-button">-</button>
+					<div class="row" style="flex:0;align-self: flex-start;">
+						<button type="button" class="container-button" onclick="addCores(1)">+</button>
+						<button type="button" class="container-button" onclick="addCores(-1)">-</button>
 					</div>
 					
 				</div>
@@ -76,13 +76,13 @@
 			</div>
 			<div class="grupo-filtro">
 				<h2>Pré visualizar</h2>
-				<div class="pre-visualizar">
+				<div id="pre-visualizar">
 					
 				</div>
 			</div>
 			<div style="display: flex;padding:20px 30px; justify-content: space-between;">
 				<button class="primary-button" style="margin:0">limpar</button>
-				<button class="primary-button" style="margin:0">confirmar</button>
+				<button class="primary-button" style="margin:0" onclick="salvarTema()">confirmar</button>
 			</div>
 		</div>
 	</main>
@@ -98,6 +98,8 @@
 		const interface = document.querySelector("div#interface")
 		const options = document.querySelector("div#options")
 		const criacao = document.querySelector("div#criacao")
+		const criacaoCores = document.querySelector("div#criacao-cores")
+		const preVisualizar = document.querySelector("div#pre-visualizar")
 
 		const optionsHeight = options.offsetHeight;
 		const criacaoWidth = criacao.offsetWidth;
@@ -243,6 +245,42 @@
 			return `blur(${blur}px) brightness(${brightness}) saturate(${saturate}) opacity(${opacity})`
 		}
 
+		function addCores(valor){
+			if(valor > 0){
+				criacaoCores.innerHTML += `<input type="text" class="cor-input" value="#FFF" onblur='carregarPrevisualizacao()'>`
+			}else{
+				if(criacaoCores.childElementCount > 1){
+					criacaoCores.lastChild.remove()
+				}	
+			}
+		}
+
+		var temaSendoCriado = {
+			id:0,
+			angulo: 90,
+			tipo: "linear",
+			cores:[]
+		}
+
+		function carregarPrevisualizacao(){
+			for(let cor of criacaoCores.children){
+				temaSendoCriado.cores.push(cor.value)
+			}
+			console.log(temaSendoCriado)
+			let gradiente = `${gerarGradiente(temaSendoCriado).replace("background-image:", "")}`
+			preVisualizar.style.backgroundImage = gradiente;
+		}
+
+
+		function salvarTema() {
+			temaSendoCriado.id = todosTemas[todosTemas.length - 1].id + 1
+			todosTemas.push(temaSendoCriado);
+			carregarTemas();
+			abrirCriacao();
+			toggleOptions();
+
+		}
+
 		setInterval(function(){
 			saturar()
 		}, 1000)
@@ -252,6 +290,7 @@
 		}
 
 		carregarTemas();
+		
 
 	</script>
 </body>

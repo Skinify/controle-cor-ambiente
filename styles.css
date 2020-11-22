@@ -215,7 +215,7 @@ html, body, main {
 
 .cor-input{
     position: relative;
-    margin:6px 0;
+    margin:6px 4px;
     border:2px solid white;
     width: 25%;
     height: 26px;
@@ -283,8 +283,14 @@ font-weight: lighter;
 margin:2px 0;
 }
 
-.grupo-filtro .pre-visualizar{
+.grupo-filtro #pre-visualizar{
     border:2px solid white;
     height: 40px;
     width: 100%;
+}
+
+#criacao-cores{
+    display: flex; 
+    flex:1; 
+    flex-wrap: wrap;
 }
