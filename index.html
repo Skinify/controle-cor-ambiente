@@ -67,8 +67,8 @@
 			</div>
 			<div class="grupo-filtro">
 				<h2>Gradiente</h2>
-				<select style="width: 100%;">
-					<option value="0">Linear</option>
+				<select style="width: 100%;" id="filtro-gradiente" onchange="carregarPrevisualizacao()">
+					<option value="0" selected>Linear</option>
 					<option value="1">Radial</option>
 					<option value="2">Linear repetindo</option>
 					<option value="3">Radial repetindo</option>
@@ -77,10 +77,18 @@
 			<div class="grupo-filtro">
 				<div class="row" style="align-items: center;justify-content: space-between;">
 					<h2>Luminosidade</h2>
-					<span id="valor-luminosidade">1.0</span>
+					<span>1.0</span>
 				</div>
-				<input type="range"  min="0.4" max="2" step="0.02" class="slider" oninput="alterarValorSlider(this)">
+				<input type="range"  min="0.4" max="2" step="0.02" class="slider" id="filtro-luminosidade" oninput="alterarValorSlider(this)">
 			</div>
+			<div class="grupo-filtro">
+				<div class="row" style="align-items: center;justify-content: space-between;">
+					<h2>Saturação</h2>
+					<span>1.0</span>
+				</div>
+				<input type="range"  min="0.4" max="2" step="0.02" class="slider" id="filtro-saturacao" oninput="alterarValorSlider(this)">
+			</div>
+			
 			<div class="grupo-filtro">
 				<h2>Pré visualizar</h2>
 				<div id="pre-visualizar">
@@ -201,7 +209,7 @@
 			atribuirEvento()
 		} 
 
-		function gerarGradiente(e){
+		function gerarGradiente(e, gradiente = 0){
 			//repeating-radial-gradient(black, transparent 100px)
 			//repeating-linear-gradient(45deg, black, transparent 100px)
 			//radial-gradient(black, transparent)
@@ -214,7 +222,18 @@
 					cores += `${cor},`
 				}
 			})
-			return `background-image:linear-gradient(${e.angulo}deg, ${cores})`
+			if(gradiente == 0){
+				return `background-image:linear-gradient(${e.angulo}deg, ${cores})`
+			}
+			if(gradiente == 1){
+				return `background-image:radial-gradient(${cores})`
+			}
+			if(gradiente == 2){
+				return `background-image:repeating-linear-gradient(${e.angulo}deg, ${cores} 100px)`
+			}
+			if(gradiente == 3){
+				return `background-image:repeating-radial-gradient(${cores} 100px)`
+			}
 		}
 
 		function atribuirTema(e, temaDefinido){
@@ -278,12 +297,13 @@
 		}
 
 		function carregarPrevisualizacao(){
+			let gradiente = document.querySelector("select#filtro-gradiente").value;
 			let novasCores = []
 			for(let cor of criacaoCores.children){
 				novasCores.push(cor.value)
 			}
 			temaSendoCriado.cores = novasCores
-			preVisualizar.style.backgroundImage = `${gerarGradiente(temaSendoCriado).replace("background-image:", "")}`;
+			preVisualizar.style.backgroundImage = `${gerarGradiente(temaSendoCriado, gradiente).replace("background-image:", "")}`;
 		}
 
 		function salvarTema() {
