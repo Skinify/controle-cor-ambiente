@@ -294,3 +294,12 @@ margin:2px 0;
     flex:1; 
     flex-wrap: wrap;
 }
+
+select{
+    background-color:white;
+    border: 2px solid white;
+    padding:12px 12px;
+    color:#333;
+    font-weight: lighter;
+    text-transform: uppercase;
+}

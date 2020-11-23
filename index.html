@@ -5,7 +5,6 @@
 	<script src="webOSTVjs-1.2.0/webOSTV.js" charset="utf-8"></script>
 	<script src="webOSTVjs-1.2.0/webOSTV-dev.js" charset="utf-8"></script>
 	<script type="text/javascript">
-	   //sample code for calling LS2 API
        var lunaReq= webOS.service.request("luna://com.palm.systemservice",
         {
             method:"clock/getTime",
@@ -58,15 +57,23 @@
 				<div class="row" style="justify-content:flex-start;align-items: center;">
 					<div id="criacao-cores">
 						<input type="text" class="cor-input" value="#FFF" onblur="carregarPrevisualizacao()">
+						<input type="text" class="cor-input" value="#FFF" onblur="carregarPrevisualizacao()">
 					</div>
 					<div class="row" style="flex:0;align-self: flex-start;">
 						<button type="button" class="container-button" onclick="addCores(true)">+</button>
 						<button type="button" class="container-button" onclick="addCores(false)">-</button>
 					</div>
-					
 				</div>
 			</div>
-			
+			<div class="grupo-filtro">
+				<h2>Gradiente</h2>
+				<select style="width: 100%;">
+					<option value="0">Linear</option>
+					<option value="1">Radial</option>
+					<option value="2">Linear repetindo</option>
+					<option value="3">Radial repetindo</option>
+				</select>
+			</div>
 			<div class="grupo-filtro">
 				<div class="row" style="align-items: center;justify-content: space-between;">
 					<h2>Luminosidade</h2>
@@ -81,19 +88,12 @@
 				</div>
 			</div>
 			<div style="display: flex;padding:20px 30px; justify-content: space-between;">
-				<button class="primary-button" style="margin:0">limpar</button>
+				<button class="primary-button" style="margin:0" onclick="limparDados()">limpar</button>
 				<button class="primary-button" style="margin:0" onclick="salvarTema()">confirmar</button>
 			</div>
 		</div>
 	</main>
 	<script>
-
-
-		function alterarValorSlider(e){
-			e.parentElement.children[0].children[1].innerHTML = e.value
-		}
-
-
 		const background = document.querySelector("div#background")
 		const interface = document.querySelector("div#interface")
 		const options = document.querySelector("div#options")
@@ -101,8 +101,8 @@
 		const criacaoCores = document.querySelector("div#criacao-cores")
 		const preVisualizar = document.querySelector("div#pre-visualizar")
 
-		const optionsHeight = options.offsetHeight;
-		const criacaoWidth = criacao.offsetWidth;
+		var optionsHeight = options.offsetHeight;
+		var criacaoWidth = criacao.offsetWidth;
 
 		const gradienteInicial = "linear-gradient(50deg, #ec4343, #3131f1)"
 		const temas = document.querySelector("div#temas");
@@ -144,6 +144,7 @@
 				background.style.pointerEvents = "none";
 				opcaoAberta = true;
 			}
+			optionsHeight = options.offsetHeight;
 		}
 
 		function abrirCriacao(){
@@ -157,7 +158,13 @@
 				background.style.filter = gerarFiltros(0.6,0.8,1,1, true)
 				background.style.pointerEvents = "none";
 				criacaoAberta = true;
+				carregarPrevisualizacao()
 			}
+			criacaoWidth = criacao.offsetWidth;
+		}
+
+		function alterarValorSlider(e){
+			e.parentElement.children[0].children[1].innerHTML = e.value
 		}
 
 		function stopIdle(){
@@ -229,11 +236,6 @@
 			})
 		}
 
-		var teste = 0;
-
-		function saturar(){
-			background.style.filter = gerarFiltros(filtrosTema.blur, filtrosTema.brightness, numeroEntre(1, 1.30), filtrosTema.opacity)
-		}
 
 		function gerarFiltros(blur = filtrosTema.blur, brightness = filtrosTema.brightness, saturate = filtrosTema.saturate, opacity = filtrosTema.opacity, atulizar = false){
 			if(atulizar){
@@ -245,19 +247,21 @@
 			return `blur(${blur}px) brightness(${brightness}) saturate(${saturate}) opacity(${opacity})`
 		}
 
-		var temaSendoCriado = {
+		const temaPadrao = {
 			id:0,
 			angulo: 90,
 			tipo: "linear",
-			cores:[]
+			cores:["#FFF","#FFF"]
 		}
+
+		var temaSendoCriado = {...temaPadrao}
 
 		function addCores(valor){
 			if(valor){
 				console.log(temaSendoCriado.cores)
 				temaSendoCriado.cores.push("#FFF");
 			}else{
-				if(criacaoCores.childElementCount > 1){
+				if(criacaoCores.childElementCount > 2){
 					temaSendoCriado.cores.pop();
 				}	
 			}
@@ -282,19 +286,27 @@
 			preVisualizar.style.backgroundImage = `${gerarGradiente(temaSendoCriado).replace("background-image:", "")}`;
 		}
 
-
 		function salvarTema() {
 			temaSendoCriado.id = todosTemas[todosTemas.length - 1].id + 1
 			todosTemas.push(temaSendoCriado);
 			carregarTemas();
 			abrirCriacao();
 			toggleOptions();
+		}
 
+		function limparDados(){
+			temaSendoCriado = temaPadrao;
+			renderizarInputCores()
+			carregarPrevisualizacao()
 		}
 
 		setInterval(function(){
-			saturar()
+			fluirFiltros()
 		}, 500)
+
+		function fluirFiltros(){
+			background.style.filter = gerarFiltros(filtrosTema.blur, numeroEntre(0.9, 1.30), numeroEntre(1, 1.30), filtrosTema.opacity)
+		}
 
 		function numeroEntre(x, y){
 			return (Math.random() * (y - x) + x).toFixed(2)
