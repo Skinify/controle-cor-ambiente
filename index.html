@@ -60,8 +60,8 @@
 						<input type="text" class="cor-input" value="#FFF" onblur="carregarPrevisualizacao()">
 					</div>
 					<div class="row" style="flex:0;align-self: flex-start;">
-						<button type="button" class="container-button" onclick="addCores(1)">+</button>
-						<button type="button" class="container-button" onclick="addCores(-1)">-</button>
+						<button type="button" class="container-button" onclick="addCores(true)">+</button>
+						<button type="button" class="container-button" onclick="addCores(false)">-</button>
 					</div>
 					
 				</div>
@@ -232,7 +232,7 @@
 		var teste = 0;
 
 		function saturar(){
-			background.style.filter = gerarFiltros(filtrosTema.blur, filtrosTema.brightness, numeroEntre(1, 1.10), filtrosTema.opacity)
+			background.style.filter = gerarFiltros(filtrosTema.blur, filtrosTema.brightness, numeroEntre(1, 1.30), filtrosTema.opacity)
 		}
 
 		function gerarFiltros(blur = filtrosTema.blur, brightness = filtrosTema.brightness, saturate = filtrosTema.saturate, opacity = filtrosTema.opacity, atulizar = false){
@@ -245,16 +245,6 @@
 			return `blur(${blur}px) brightness(${brightness}) saturate(${saturate}) opacity(${opacity})`
 		}
 
-		function addCores(valor){
-			if(valor > 0){
-				criacaoCores.innerHTML += `<input type="text" class="cor-input" value="#FFF" onblur='carregarPrevisualizacao()'>`
-			}else{
-				if(criacaoCores.childElementCount > 1){
-					criacaoCores.lastChild.remove()
-				}	
-			}
-		}
-
 		var temaSendoCriado = {
 			id:0,
 			angulo: 90,
@@ -262,13 +252,34 @@
 			cores:[]
 		}
 
-		function carregarPrevisualizacao(){
-			for(let cor of criacaoCores.children){
-				temaSendoCriado.cores.push(cor.value)
+		function addCores(valor){
+			if(valor){
+				console.log(temaSendoCriado.cores)
+				temaSendoCriado.cores.push("#FFF");
+			}else{
+				if(criacaoCores.childElementCount > 1){
+					temaSendoCriado.cores.pop();
+				}	
 			}
-			console.log(temaSendoCriado)
-			let gradiente = `${gerarGradiente(temaSendoCriado).replace("background-image:", "")}`
-			preVisualizar.style.backgroundImage = gradiente;
+			renderizarInputCores()
+			carregarPrevisualizacao()
+		}
+
+		function renderizarInputCores(){
+			let novoInnerHtml = ""
+			temaSendoCriado.cores.forEach(function(cor){
+				novoInnerHtml += `<input type="text" class="cor-input" value="${cor}" onblur="carregarPrevisualizacao()">`
+			})
+			criacaoCores.innerHTML = novoInnerHtml
+		}
+
+		function carregarPrevisualizacao(){
+			let novasCores = []
+			for(let cor of criacaoCores.children){
+				novasCores.push(cor.value)
+			}
+			temaSendoCriado.cores = novasCores
+			preVisualizar.style.backgroundImage = `${gerarGradiente(temaSendoCriado).replace("background-image:", "")}`;
 		}
 
 
@@ -283,7 +294,7 @@
 
 		setInterval(function(){
 			saturar()
-		}, 1000)
+		}, 500)
 
 		function numeroEntre(x, y){
 			return (Math.random() * (y - x) + x).toFixed(2)
