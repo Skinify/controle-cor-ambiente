@@ -116,25 +116,32 @@
 		const temas = document.querySelector("div#temas");
 
 		background.style.backgroundImage = gradienteInicial
+
 		var temaAtual = 0;
-		var filtrosTema = {
-			brightness: 1,
-			blur:0,
-			saturate:1,
-			opacity: 1
-		}
 
 		var todosTemas = [{
 			id:0,
-			angulo: 90,
-			tipo: "linear",
-			cores:["red","blue","yellow"]
+			angulo: 50,
+			tipo: 0,
+			cores:["#ec4343","#3131f1"],
+			filtros:{
+				brightness: 1,
+				blur:0,
+				saturate:1,
+				opacity: 1
+			}
 		},
 		{
 			id:1,
 			angulo: 90,
-			tipo: "linear",
-			cores:["red","blue"]
+			tipo: 0,
+			cores:["red","blue"],
+			filtros:{
+				brightness: 1,
+				blur:0,
+				saturate:1,
+				opacity: 1
+			}
 		}]
 
 		var opcaoAberta = false, criacaoAberta = false;
@@ -147,7 +154,6 @@
 				opcaoAberta = false;
 			}else{
 				options.style.bottom = `0px`;
-				console.log(gerarFiltros())
 				background.style.filter = gerarFiltros(0.6, 0.8, 1, 1, true)
 				background.style.pointerEvents = "none";
 				opcaoAberta = true;
@@ -173,6 +179,7 @@
 
 		function alterarValorSlider(e){
 			e.parentElement.children[0].children[1].innerHTML = e.value
+			carregarPrevisualizacao();
 		}
 
 		function stopIdle(){
@@ -209,7 +216,7 @@
 			atribuirEvento()
 		} 
 
-		function gerarGradiente(e, gradiente = 0){
+		function gerarGradiente(e){
 			//repeating-radial-gradient(black, transparent 100px)
 			//repeating-linear-gradient(45deg, black, transparent 100px)
 			//radial-gradient(black, transparent)
@@ -222,16 +229,16 @@
 					cores += `${cor},`
 				}
 			})
-			if(gradiente == 0){
+			if(e.tipo == 0){
 				return `background-image:linear-gradient(${e.angulo}deg, ${cores})`
 			}
-			if(gradiente == 1){
+			if(e.tipo == 1){
 				return `background-image:radial-gradient(${cores})`
 			}
-			if(gradiente == 2){
+			if(e.tipo == 2){
 				return `background-image:repeating-linear-gradient(${e.angulo}deg, ${cores} 100px)`
 			}
-			if(gradiente == 3){
+			if(e.tipo == 3){
 				return `background-image:repeating-radial-gradient(${cores} 100px)`
 			}
 		}
@@ -245,7 +252,8 @@
 					tema.classList.remove("selecionado")
 				}
 			})
-			background.style.backgroundImage = e.target.style.backgroundImage
+			temaAtual = e.target.getAttribute("id");
+			background.style.backgroundImage = gerarGradiente(todosTemas[temaAtual]).replace("background-image:", "")
 		}
 
 		function atribuirEvento(){
@@ -256,28 +264,20 @@
 		}
 
 
-		function gerarFiltros(blur = filtrosTema.blur, brightness = filtrosTema.brightness, saturate = filtrosTema.saturate, opacity = filtrosTema.opacity, atulizar = false){
+		function gerarFiltros(blur = todosTemas[temaAtual].filtros.blur, brightness = todosTemas[temaAtual].filtros.brightness, saturate = todosTemas[temaAtual].filtros.saturate, opacity = todosTemas[temaAtual].filtros.opacity, atulizar = false){
 			if(atulizar){
-				filtrosTema.blur = blur;
-				filtrosTema.brightness = brightness;
-				filtrosTema.saturate = saturate;
-				filtrosTema.opacity = opacity;
+				todosTemas[temaAtual].filtros.blur = blur;
+				todosTemas[temaAtual].filtros.brightness = brightness;
+				todosTemas[temaAtual].filtros.saturate = saturate;
+				todosTemas[temaAtual].filtros.opacity = opacity;
 			}
 			return `blur(${blur}px) brightness(${brightness}) saturate(${saturate}) opacity(${opacity})`
 		}
 
-		const temaPadrao = {
-			id:0,
-			angulo: 90,
-			tipo: "linear",
-			cores:["#FFF","#FFF"]
-		}
-
-		var temaSendoCriado = {...temaPadrao}
+		var temaSendoCriado = {...todosTemas[temaAtual]}
 
 		function addCores(valor){
 			if(valor){
-				console.log(temaSendoCriado.cores)
 				temaSendoCriado.cores.push("#FFF");
 			}else{
 				if(criacaoCores.childElementCount > 2){
@@ -298,12 +298,17 @@
 
 		function carregarPrevisualizacao(){
 			let gradiente = document.querySelector("select#filtro-gradiente").value;
+			let luminosidade = document.querySelector("input[type='range']#filtro-luminosidade").value;
+			let saturacao = document.querySelector("input[type='range']#filtro-saturacao").value;
+			
 			let novasCores = []
 			for(let cor of criacaoCores.children){
 				novasCores.push(cor.value)
 			}
 			temaSendoCriado.cores = novasCores
-			preVisualizar.style.backgroundImage = `${gerarGradiente(temaSendoCriado, gradiente).replace("background-image:", "")}`;
+			temaSendoCriado.tipo = gradiente;
+			temaSendoCriado.filtros = preVisualizar.style.filter = `${gerarFiltros(0, luminosidade, saturacao)}`;
+			preVisualizar.style.backgroundImage = `${gerarGradiente(temaSendoCriado).replace("background-image:", "")}`;
 		}
 
 		function salvarTema() {
@@ -325,7 +330,8 @@
 		}, 500)
 
 		function fluirFiltros(){
-			background.style.filter = gerarFiltros(filtrosTema.blur, numeroEntre(0.9, 1.30), numeroEntre(1, 1.30), filtrosTema.opacity)
+			let {blur, brightness, opacity, saturate} = todosTemas[temaAtual].filtros;
+			background.style.filter = gerarFiltros(blur, numeroEntre(brightness - 0.1, brightness + 0.20), numeroEntre(saturate - 0.06, saturate + 0.026), opacity)
 		}
 
 		function numeroEntre(x, y){
