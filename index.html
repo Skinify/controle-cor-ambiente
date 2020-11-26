@@ -144,12 +144,15 @@
 			}
 		}]
 
+		var temaSendoCriado = {}
+
 		var opcaoAberta = false, criacaoAberta = false;
 
 		function toggleOptions(){
 			if(opcaoAberta){
 				options.style.bottom = `-${optionsHeight}px`
-				background.style.filter = gerarFiltros(0, 1, 1, 1, true)
+				let {blur, opacity, saturate, brightness} = todosTemas[temaAtual].filtros;
+				background.style.filter = gerarFiltros(blur, brightness,saturate, opacity, true)
 				background.style.pointerEvents = "all";
 				opcaoAberta = false;
 			}else{
@@ -164,7 +167,8 @@
 		function abrirCriacao(){
 			if(criacaoAberta){
 				criacao.style.right = `-${criacaoWidth}px`
-				background.style.filter = gerarFiltros(0,1,1,1, true)
+				let {blur, opacity, saturate, brightness} = todosTemas[temaAtual].filtros;
+				background.style.filter = gerarFiltros(blur, brightness,saturate, opacity, true)
 				background.style.pointerEvents = "all";
 				criacaoAberta = false;
 			}else{
@@ -172,6 +176,17 @@
 				background.style.filter = gerarFiltros(0.6,0.8,1,1, true)
 				background.style.pointerEvents = "none";
 				criacaoAberta = true;
+				temaSendoCriado = {
+					angulo: 0,
+					tipo: 0,
+					cores:[],
+					filtros:{
+						brightness: 1,
+						blur:0,
+						saturate:1,
+						opacity: 1
+					}
+				}
 				carregarPrevisualizacao()
 			}
 			criacaoWidth = criacao.offsetWidth;
@@ -274,8 +289,6 @@
 			return `blur(${blur}px) brightness(${brightness}) saturate(${saturate}) opacity(${opacity})`
 		}
 
-		var temaSendoCriado = {...todosTemas[temaAtual]}
-
 		function addCores(valor){
 			if(valor){
 				temaSendoCriado.cores.push("#FFF");
@@ -305,22 +318,26 @@
 			for(let cor of criacaoCores.children){
 				novasCores.push(cor.value)
 			}
+
 			temaSendoCriado.cores = novasCores
 			temaSendoCriado.tipo = gradiente;
-			temaSendoCriado.filtros = preVisualizar.style.filter = `${gerarFiltros(0, luminosidade, saturacao)}`;
+			temaSendoCriado.filtros.brightness = luminosidade;
+			temaSendoCriado.filtros.saturate = saturacao;
+			preVisualizar.style.filter = `${gerarFiltros(0, luminosidade, saturacao,1, false)}`;
 			preVisualizar.style.backgroundImage = `${gerarGradiente(temaSendoCriado).replace("background-image:", "")}`;
 		}
 
 		function salvarTema() {
 			temaSendoCriado.id = todosTemas[todosTemas.length - 1].id + 1
 			todosTemas.push(temaSendoCriado);
+			temaSendoCriado = {}
 			carregarTemas();
 			abrirCriacao();
 			toggleOptions();
 		}
 
 		function limparDados(){
-			temaSendoCriado = temaPadrao;
+			temaSendoCriado = {};
 			renderizarInputCores()
 			carregarPrevisualizacao()
 		}
@@ -331,7 +348,7 @@
 
 		function fluirFiltros(){
 			let {blur, brightness, opacity, saturate} = todosTemas[temaAtual].filtros;
-			background.style.filter = gerarFiltros(blur, numeroEntre(brightness - 0.1, brightness + 0.20), numeroEntre(saturate - 0.06, saturate + 0.026), opacity)
+			background.style.filter = gerarFiltros(blur, numeroEntre(brightness - 0.1, brightness + 0.20), numeroEntre(saturate - 0.06, saturate + 0.026), opacity, false)
 		}
 
 		function numeroEntre(x, y){
